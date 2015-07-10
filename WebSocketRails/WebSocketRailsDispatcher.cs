@@ -9,7 +9,6 @@ namespace WebSocketRails
 {
     public class WebSocketRailsDispatcher
     {
-	    private String state;
 	    private Uri url;
 	    private Dictionary<String, WebSocketRailsChannel> channels;
 	    private String connectionId;
@@ -20,7 +19,7 @@ namespace WebSocketRails
 	    public WebSocketRailsDispatcher(Uri url) 
         {
             this.url = url;
-            state = "connecting";
+            State = "connecting";
             channels = new Dictionary<String, WebSocketRailsChannel>();
             queue = new Dictionary<long, WebSocketRailsEvent>();
             callbacks = new Dictionary<String, List<EventHandler<WebSocketRailsDataEventArgs>>>();
@@ -50,14 +49,14 @@ namespace WebSocketRails
 	                Dispatch(_event);
 	            }
 	        
-	            if (state == "connecting" && _event.Name == "client_connected")
+	            if (State == "connecting" && _event.Name == "client_connected")
 	                ConnectionEstablished(_event.Data);
 	        }		
 	    }
 	
 	    public void ConnectionEstablished(Object data) 
         {
-	        state = "connected";
+	        State = "connected";
 	        if(data.GetType() == typeof(JObject)) {
 
                 Dictionary<String, Object> infoDictionary = ((JObject)data)
