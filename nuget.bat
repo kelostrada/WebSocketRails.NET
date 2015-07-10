@@ -1,2 +1,2 @@
-nuget pack WebSocketRails-WP.csproj -Prop Configuration=Release
-nuget push WebSocketRails.1.0.6.nupkg
+nuget pack WebSocketRails.csproj -Prop Configuration=Release
+nuget push WebSocketRailsNet.1.0.0.nupkg
