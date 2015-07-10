@@ -4,6 +4,8 @@ Port of JavaScript client provided by https://github.com/websocket-rails/websock
 
 Built on top of WebSocket4Net
 
+Ported from https://github.com/ararog/WebSocketRails-WP to be usable everywhere (not just windows phone)
+
 ## Misc
 
 Refer to https://github.com/websocket-rails/websocket-rails to learn more about WebSocketRails
