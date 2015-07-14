@@ -4,13 +4,13 @@
     <id>WebSocketRailsNet</id>
     <version>$version$</version>
     <title>$title$</title>
-    <authors>kelostrada</authors>
-    <owners>ararog</owners>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <projectUrl>https://github.com/kelostrada/WebSocketRails.NET</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>.NET client of WebSocket-Rails</description>
-    <releaseNotes>added some tests</releaseNotes>
+    <description>$description$</description>
+    <releaseNotes>fixed triggering events</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>websocket-rails</tags>
-	<projectUrl>https://github.com/kelostrada/WebSocketRails.NET</projectUrl>
   </metadata>
 </package>
