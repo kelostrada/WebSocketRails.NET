@@ -45,12 +45,12 @@ namespace WebSocketRails
 	    public void Trigger(WebSocketRailsEvent _event) 
         {
 	        if (dispatcher.State == "connected")
-	            message_queue.Add(_event);
+                webSocket.Send(_event.Serialize());
 	        else
-	            webSocket.Send(_event.Serialize());		
+                message_queue.Add(_event);
 	    }
 	
-	    public void FlushQueue(String id) 
+	    public void FlushQueue() 
         {
 	        foreach (WebSocketRailsEvent _event in message_queue)
 	        {

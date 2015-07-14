@@ -58,12 +58,7 @@ namespace WebSocketRails
         {
 	        State = "connected";
 	        if(data.GetType() == typeof(JObject)) {
-
-                Dictionary<String, Object> infoDictionary = ((JObject)data)
-                    .ToObject<Dictionary<String, Object>>();
-
-                ConnectionId = (String)infoDictionary["connection_id"];
-                connection.FlushQueue(ConnectionId);
+                connection.FlushQueue();
 
                 List<Object> frame = new List<Object>();
                 frame.Add("connection_opened");

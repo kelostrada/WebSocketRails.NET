@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using WebSocket4Net;
 
 namespace WebSocketRails.Tests
 {
@@ -29,16 +30,8 @@ namespace WebSocketRails.Tests
             }
 
             Trace.WriteLine("connected");
-
-            channel = dispatcher.Subscribe("ticker");
-
-            channel.Bind("ticker.new", (sender, e) =>
-            {
-                Trace.WriteLine("Message: " + JsonConvert.SerializeObject(e.Data));
-            });
-
-            while (true) { }
             
         }
+
     }
 }
