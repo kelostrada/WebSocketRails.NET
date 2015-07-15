@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using WebSocket4Net;
 
 namespace WebSocketRails.Tests
 {
@@ -13,6 +14,8 @@ namespace WebSocketRails.Tests
         [TestMethod]
         public void BitfinexConnection()
         {
+            var ticks = new List<string>();
+
             var dispatcher = new WebSocketRailsDispatcher(new Uri("wss://ws.bitfinex.com:3333/websocket"));
 
             var channel = dispatcher.Subscribe("ticker");
@@ -20,17 +23,15 @@ namespace WebSocketRails.Tests
             channel.Bind("ticker.new", (sender, e) =>
             {
                 Trace.WriteLine("Message: " + JsonConvert.SerializeObject(e.Data));
+                ticks.Add(JsonConvert.SerializeObject(e.Data));
             });
 
             dispatcher.Connect();
 
-            while (dispatcher.State != "connected")
-            {
+            Thread.Sleep(10000);
 
-            }
-
-            Trace.WriteLine("connected");
-            
+            Assert.AreEqual("connected", dispatcher.State);
+            Assert.IsTrue(ticks.Count > 0);
         }
 
     }
