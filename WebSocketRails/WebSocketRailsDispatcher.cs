@@ -11,7 +11,6 @@ namespace WebSocketRails
     {
 	    private Uri url;
 	    private Dictionary<String, WebSocketRailsChannel> channels;
-	    private String connectionId;
         private Dictionary<long, WebSocketRailsEvent> queue;
         private Dictionary<String, List<EventHandler<WebSocketRailsDataEventArgs>>> callbacks;
 	    private WebSocketRailsConnection connection;
@@ -25,7 +24,6 @@ namespace WebSocketRails
             callbacks = new Dictionary<String, List<EventHandler<WebSocketRailsDataEventArgs>>>();
         
             connection = new WebSocketRailsConnection(url, this);
-            connectionId = "";
 	    }
 
 	    public void NewMessage(List<Object> data)
@@ -57,7 +55,13 @@ namespace WebSocketRails
 	    public void ConnectionEstablished(Object data) 
         {
 	        State = "connected";
-	        if(data.GetType() == typeof(JObject)) {
+	        if (data.GetType() == typeof(JObject)) {
+
+                Dictionary<String, Object> infoDictionary = ((JObject)data)
+                    .ToObject<Dictionary<String, Object>>();
+
+                ConnectionId = (String)infoDictionary["connection_id"];
+
                 connection.FlushQueue();
 
                 List<Object> frame = new List<Object>();
@@ -93,7 +97,7 @@ namespace WebSocketRails
                 frame.Add(payload);
             }
 
-		    frame.Add(connectionId);
+		    frame.Add(ConnectionId);
 		
 	        WebSocketRailsEvent _event = new WebSocketRailsEvent(frame, success, failure);
 	        queue[_event.Id] = _event;
