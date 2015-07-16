@@ -26,12 +26,29 @@ namespace WebSocketRails.Tests
                 ticks.Add(JsonConvert.SerializeObject(e.Data));
             });
 
+            dispatcher.Connection.Opened += (sender, args) =>
+            {
+                Trace.WriteLine("Connected!");
+            };
+
+            dispatcher.Connection.Closed += (sender, args) =>
+            {
+                Trace.WriteLine("Closed!");
+            };
+
+            dispatcher.Connection.Error += (sender, args) =>
+            {
+                Trace.WriteLine("Error! " + args.Exception.Message);
+            };
+
             dispatcher.Connect();
 
             Thread.Sleep(10000);
 
             Assert.AreEqual("connected", dispatcher.State);
             Assert.IsTrue(ticks.Count > 0);
+
+
         }
 
     }

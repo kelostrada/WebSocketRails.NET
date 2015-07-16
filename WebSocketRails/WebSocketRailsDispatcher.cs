@@ -13,7 +13,7 @@ namespace WebSocketRails
 	    private Dictionary<String, WebSocketRailsChannel> channels;
         private Dictionary<long, WebSocketRailsEvent> queue;
         private Dictionary<String, List<EventHandler<WebSocketRailsDataEventArgs>>> callbacks;
-	    private WebSocketRailsConnection connection;
+	    public WebSocketRailsConnection Connection { get; private set; }
 	
 	    public WebSocketRailsDispatcher(Uri url) 
         {
@@ -23,7 +23,7 @@ namespace WebSocketRails
             queue = new Dictionary<long, WebSocketRailsEvent>();
             callbacks = new Dictionary<String, List<EventHandler<WebSocketRailsDataEventArgs>>>();
         
-            connection = new WebSocketRailsConnection(url, this);
+            Connection = new WebSocketRailsConnection(url, this);
 	    }
 
 	    public void NewMessage(List<Object> data)
@@ -62,7 +62,7 @@ namespace WebSocketRails
 
                 ConnectionId = (String)infoDictionary["connection_id"];
 
-                connection.FlushQueue();
+                Connection.FlushQueue();
 
                 List<Object> frame = new List<Object>();
                 frame.Add("connection_opened");
@@ -101,7 +101,7 @@ namespace WebSocketRails
 		
 	        WebSocketRailsEvent _event = new WebSocketRailsEvent(frame, success, failure);
 	        queue[_event.Id] = _event;
-	        connection.Trigger(_event);
+	        Connection.Trigger(_event);
 	    }
 
         public void Trigger(String eventName, Object data)
@@ -115,7 +115,7 @@ namespace WebSocketRails
 	             return;
 	     
 	         queue[_event.Id] = _event;
-	         connection.Trigger(_event);		
+	         Connection.Trigger(_event);		
 	    }
 	
 	    public void Dispatch(WebSocketRailsEvent _event) 
@@ -171,17 +171,17 @@ namespace WebSocketRails
 		    frame.Add(ConnectionId);
 		
 	        WebSocketRailsEvent pong = new WebSocketRailsEvent(frame);
-	        connection.Trigger(pong);
+	        Connection.Trigger(pong);
 	    }
 
         public void Connect()
         {
-            connection.Connect();
+            Connection.Connect();
         }
 
 	    public void Disconnect()
 	    {
-	        connection.Disconnect();
+	        Connection.Disconnect();
 	    }
 	
 	    public String State { get; set; }

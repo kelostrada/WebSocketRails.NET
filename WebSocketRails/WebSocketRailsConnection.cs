@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using SuperSocket.ClientEngine;
 using WebSocket4Net;
 
 namespace WebSocketRails
@@ -11,7 +12,11 @@ namespace WebSocketRails
         private Uri uri;
 	    private WebSocketRailsDispatcher dispatcher;
 	    private List<WebSocketRailsEvent> message_queue;
-	    private WebSocket webSocket;
+        private readonly WebSocket _webSocket;
+
+        public event EventHandler<ErrorEventArgs> Error;
+        public event EventHandler Opened;
+        public event EventHandler Closed;
 	
 	    public WebSocketRailsConnection(Uri uri, WebSocketRailsDispatcher dispatcher) 
         {
@@ -19,10 +24,14 @@ namespace WebSocketRails
             this.dispatcher = dispatcher;
             this.message_queue = new List<WebSocketRailsEvent>();
 
-	        webSocket = new WebSocket(uri.ToString());
-            webSocket.Closed += webSocket_Closed;
-            webSocket.MessageReceived += webSocket_MessageReceived;
-	    }
+	        _webSocket = new WebSocket(uri.ToString());
+            _webSocket.Closed += webSocket_Closed;
+            _webSocket.MessageReceived += webSocket_MessageReceived;
+
+	        _webSocket.Error += (sender, args) => OnError(args);
+	        _webSocket.Opened += (sender, args) => OnOpened();
+	        _webSocket.Closed += (sender, args) => OnClosed();
+        }
 
         void webSocket_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
@@ -39,13 +48,13 @@ namespace WebSocketRails
 
             WebSocketRailsEvent closeEvent = new WebSocketRailsEvent(data);
             dispatcher.State = "disconnected";
-            dispatcher.Dispatch(closeEvent);            
+            dispatcher.Dispatch(closeEvent);
         }
 
 	    public void Trigger(WebSocketRailsEvent _event) 
         {
 	        if (dispatcher.State == "connected")
-                webSocket.Send(_event.Serialize());
+                _webSocket.Send(_event.Serialize());
 	        else
                 message_queue.Add(_event);
 	    }
@@ -55,18 +64,36 @@ namespace WebSocketRails
 	        foreach (WebSocketRailsEvent _event in message_queue)
 	        {
 	            String serializedEvent = _event.Serialize();
-	            webSocket.Send(serializedEvent);
+	            _webSocket.Send(serializedEvent);
 	        }		
 	    }
 
         public void Connect()
         {
-            webSocket.Open();
+            _webSocket.Open();
         }
 
 	    public void Disconnect() 
         {
-		    webSocket.Close();
+		    _webSocket.Close();
 	    }
+
+        protected virtual void OnError(ErrorEventArgs e)
+        {
+            var handler = Error;
+            if (handler != null) handler(this, e);
+        }
+
+        protected virtual void OnOpened()
+        {
+            var handler = Opened;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnClosed()
+        {
+            var handler = Closed;
+            if (handler != null) handler(this, EventArgs.Empty);
+        }
     }
 }

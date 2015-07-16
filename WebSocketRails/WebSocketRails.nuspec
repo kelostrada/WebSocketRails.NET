@@ -9,7 +9,7 @@
     <projectUrl>https://github.com/kelostrada/WebSocketRails.NET</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>fixed triggering events</releaseNotes>
+    <releaseNotes>Connection now exposes event Error, Closed, Opened</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>websocket-rails</tags>
   </metadata>
